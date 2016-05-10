@@ -292,13 +292,23 @@ var getKeySet = function (q) {
         for (var fieldName in set) {
           set[fieldName].forEach(function (token) {
             // orKeySet[bool].push('DF' + '￮' + fieldName + '￮' + token + '￮￮')
-            if (q.filter && Array.isArray(q.filter)) {
+            if (q.filter && Array.isArray(q.filter) && q.filter.length) {
               // Filters: TODO
               q.filter.forEach(function (filter) {
-                orKeySet[bool].push([
-                  'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filter.gte,
-                  'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filter.lte + '￮'
-                ])
+                if (filter.key) {
+                  Array.isArray(filter.key) || (filter.key = [filter.key]);
+                  filter.key.forEach(function(filterKey) {
+                    orKeySet[bool].push([
+                      'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filterKey,
+                      'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filterKey + '￮'
+                    ]);
+                  });
+                } else {
+                  orKeySet[bool].push([
+                    'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filter.gte,
+                    'DF￮' + fieldName + '￮' + token + '￮' + filter.field + '￮' + filter.lte + '￮'
+                  ]);
+                }
               })
             } else {
               orKeySet[bool].push([
