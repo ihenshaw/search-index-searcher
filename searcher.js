@@ -311,10 +311,19 @@ var getKeySet = function (q) {
                 }
               })
             } else {
-              orKeySet[bool].push([
-                'DF￮' + fieldName + '￮' + token + '￮￮',
-                'DF￮' + fieldName + '￮' + token + '￮￮￮'
-              ])
+              // if the token has "gte" and "lte" properties, than we're wanting to look for a range, rather than a 
+              // single value.
+              if (typeof token.gte !== "undefined") {
+                orKeySet[bool].push([
+                  'DF￮' + fieldName + '￮' + token.gte + '￮￮',
+                  'DF￮' + fieldName + '￮' + token.lte + '￮￮￮'
+                ])
+              } else {
+                orKeySet[bool].push([
+                  'DF￮' + fieldName + '￮' + token + '￮￮',
+                  'DF￮' + fieldName + '￮' + token + '￮￮￮'
+                ])
+              }
             }
           })
         }
